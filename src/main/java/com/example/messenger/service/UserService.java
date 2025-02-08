@@ -3,6 +3,7 @@ package com.example.messenger.service;
 import com.example.messenger.dto.UserDTO;
 import com.example.messenger.entity.Role;
 import com.example.messenger.entity.User;
+import com.example.messenger.repository.ConfirmationTokenRepository;
 import com.example.messenger.repository.RoleRepository;
 import com.example.messenger.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -31,6 +32,7 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
 
@@ -45,13 +47,19 @@ public class UserService {
         return userFromDB.orElse(new User());
     }
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public List<User> allUsers() {
         return userRepository.findAll();
     }
 
     public boolean saveUser(UserDTO dto) {
-        User userFromDB = userRepository.findByUsername(dto.getUsername());
-        if (userFromDB != null) {
+        if (userRepository.findByUsername(dto.getUsername()) != null) {
+            return false;
+        }
+        if (userRepository.findByEmail(dto.getEmail()) != null) {
             return false;
         }
         User newUser = new User();

@@ -31,6 +31,8 @@ public class User {
     private String firstName;
     @Column(name = "lastName")
     private String lastName;
+
+    private boolean isEnabled;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -38,6 +40,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
     private Set<Role> roles;
+
     public Set<Role> getRoles() {
         return roles;
     }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Table(name = "roles")
 public class Role {
@@ -19,8 +20,10 @@ public class Role {
     private String name;
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-    public Role(){
-    }
+
+//    public Role() {
+//    }
+
     public Role(Long id, String name) {
         this.id = id;
         this.name = name;
