@@ -64,7 +64,7 @@ public class UserService {
         }
         User newUser = new User();
         Role role = roleRepository.findByName("ROLE_USER");
-        newUser.setRoles(Collections.singleton(role));
+        newUser.setRole(role);
         newUser.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         newUser.setUsername(dto.getUsername());
         newUser.setEmail(dto.getEmail());
