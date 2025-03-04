@@ -1,22 +1,17 @@
 package com.example.messenger.service;
 
-import com.example.messenger.dto.UserDTO;
+import com.example.messenger.dto.SignUpRequest;
 import com.example.messenger.entity.Role;
 import com.example.messenger.entity.User;
-import com.example.messenger.repository.ConfirmationTokenRepository;
 import com.example.messenger.repository.RoleRepository;
 import com.example.messenger.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,11 +46,15 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public List<User> allUsers() {
         return userRepository.findAll();
     }
 
-    public boolean saveUser(UserDTO dto) {
+    public boolean saveUser(SignUpRequest dto) {
         if (userRepository.findByUsername(dto.getUsername()) != null) {
             return false;
         }

@@ -1,6 +1,6 @@
 package com.example.messenger.controller;
 
-import com.example.messenger.dto.UserDTO;
+import com.example.messenger.dto.SignUpRequest;
 import com.example.messenger.entity.ConfirmationToken;
 import com.example.messenger.entity.User;
 import com.example.messenger.repository.ConfirmationTokenRepository;
@@ -9,9 +9,8 @@ import com.example.messenger.service.EmailService;
 import com.example.messenger.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,9 +32,13 @@ public class RegisterController {
     public List<User> getAllUsers() {
         return userService.allUsers();
     }
+    @GetMapping("/users/get_user/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.findById(id);
+    }
 
     @PostMapping("/register")
-    public boolean register(@RequestBody UserDTO user) {
+    public boolean register(@RequestBody SignUpRequest user) {
         if (!userService.saveUser(user)) {
             return false;
         }
