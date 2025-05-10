@@ -13,24 +13,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Контроллер для обработки запросов авторизации
+ */
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
-    @Autowired
+
     private final AuthService authService;
 
+    /**
+     * Метод для входа пользователя
+     * @param authRequest сущность, содержащая имя пользователя и пароль
+     */
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody SignInRequest authRequest) throws AuthException {
         final JwtAuthResponse token = authService.login(authRequest);
         return ResponseEntity.ok(token);
     }
 
+    /**
+     * Метод для получения токена
+     * @param request сущность, содержащая refresh токен
+     */
     @PostMapping("/token")
     public ResponseEntity<JwtAuthResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) throws AuthException {
         final JwtAuthResponse token = authService.getAccessToken(request.getRefreshToken());
         return ResponseEntity.ok(token);
     }
 
+    /**
+     * Метод для обновления токена
+     * @param request сущность, содержащая refresh токен
+     */
     @PostMapping("/refresh")
     public ResponseEntity<JwtAuthResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) throws AuthException {
         final JwtAuthResponse token = authService.refresh(request.getRefreshToken());

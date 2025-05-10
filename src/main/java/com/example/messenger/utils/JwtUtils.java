@@ -6,16 +6,19 @@ import com.example.messenger.repository.RoleRepository;
 import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 @Component
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class JwtUtils {
-    @Autowired
-    private RoleRepository roleRepository;
+
+    private final RoleRepository roleRepository;
+
     public JwtAuthentication generate(Claims claims) {
         final JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setRoles(getRoles(claims));
@@ -33,8 +36,5 @@ public class JwtUtils {
             roles1.add(roleRepository.findByName(r));
         }
         return roles1;
-//        return roles.stream()
-//                .map(Role::valueOf)
-//                .collect(Collectors.toSet());
     }
 }

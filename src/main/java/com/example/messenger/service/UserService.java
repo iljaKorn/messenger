@@ -7,6 +7,7 @@ import com.example.messenger.repository.RoleRepository;
 import com.example.messenger.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,45 +16,53 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Сервис для работы с пользователями
+ */
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
-    //TODO пока непонятно почему не работают некоторые аннотации lombok
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("Пользоваткль не найден");
-        }
-        return user;
-    }
-
+    /**
+     * Метод для получения пользователя по id
+     * @param id идентификатор пользователя
+     */
     public User findById(Long id) {
         Optional<User> userFromDB = userRepository.findById(id);
         return userFromDB.orElse(new User());
     }
 
+    /**
+     * Метод для получения пользователя по почте
+     * @param email почта пользователя
+     */
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    /**
+     * Метод для получения пользователя по имени
+     * @param username имя пользователя
+     */
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * Метод для получения всех пользователей
+     */
     public List<User> allUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * Метод для сохранений пользователя в базе данных
+     * @param dto сущность с данными пользователя
+     */
     public boolean saveUser(SignUpRequest dto) {
         if (userRepository.findByUsername(dto.getUsername()) != null) {
             return false;
@@ -72,13 +81,4 @@ public class UserService {
         userRepository.save(newUser);
         return true;
     }
-
-    public boolean deleteUser(Long id) {
-        if (userRepository.findById(id).isPresent()) {
-            userRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
 }

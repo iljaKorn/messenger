@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @EnableMethodSecurity()
 public class SecurityConfig {
-    @Autowired
+
     private final JwtFilter jwtFilter;
 
     @Bean
@@ -31,9 +31,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/token").permitAll()
-                        .requestMatchers("/hello/admin").hasRole("ADMIN")
-                        .requestMatchers("/refresh", "/hello/user").authenticated())
+                        .requestMatchers("/login", "/token", "/users/all").permitAll()
+                        .requestMatchers("/refresh").authenticated())
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

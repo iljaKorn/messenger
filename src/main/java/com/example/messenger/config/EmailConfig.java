@@ -23,7 +23,6 @@ public class EmailConfig {
 
         props.put("mail.transport.protocol", "smtps");
         props.put("mail.host", "smtp.yandex.com");
-//        props.put("mail.smtp.auth", "true");
 
         return mailSender;
     }

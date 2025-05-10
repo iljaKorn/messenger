@@ -7,42 +7,39 @@ import com.example.messenger.repository.ConfirmationTokenRepository;
 import com.example.messenger.repository.UserRepository;
 import com.example.messenger.service.EmailService;
 import com.example.messenger.service.UserService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+/**
+ * Контроллер для обработки запросов регистрации
+ */
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegisterController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ConfirmationTokenRepository confirmationTokenRepository;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private UserRepository userRepository;
 
-    @GetMapping("/users/all")
-    public List<User> getAllUsers() {
-        return userService.allUsers();
-    }
-    @GetMapping("/users/get_user/{id}")
-    public User getUser(@PathVariable Long id) {
-        return userService.findById(id);
-    }
+    private final UserService userService;
 
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+
+    private final EmailService emailService;
+
+    private final UserRepository userRepository;
+
+    /**
+     * Метод, который регистрирует пользователя
+     * @param user сущность с данными для регистрации
+     */
     @PostMapping("/register")
     public boolean register(@RequestBody SignUpRequest user) {
         if (!userService.saveUser(user)) {
             return false;
         }
-        User userFromDB = userService.loadUserByUsername(user.getUsername());
+        User userFromDB = userService.findByUsername(user.getUsername());
 
         ConfirmationToken confirmationToken = new ConfirmationToken(userFromDB);
 
@@ -60,6 +57,10 @@ public class RegisterController {
         return true;
     }
 
+    /**
+     * Метод для подтверждения почты пользователя
+     * @param confirmationToken токен, подтверждающий почту
+     */
     @GetMapping("/confirm-account")
     public boolean confirmEmail(@RequestParam("token") String confirmationToken) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
@@ -73,18 +74,4 @@ public class RegisterController {
             return false;
         }
     }
-
-//    @PreAuthorize("hasAuthority('USER')")
-//    @GetMapping("hello/user")
-//    public ResponseEntity<String> helloUser() {
-//        final JwtAuthentication authInfo = authService.getAuthInfo();
-//        return ResponseEntity.ok("Hello user " + authInfo.getPrincipal() + "!");
-//    }
-//
-//    @PreAuthorize("hasAuthority('ADMIN')")
-//    @GetMapping("hello/admin")
-//    public ResponseEntity<String> helloAdmin() {
-//        final JwtAuthentication authInfo = authService.getAuthInfo();
-//        return ResponseEntity.ok("Hello admin " + authInfo.getPrincipal() + "!");
-//    }
 }
